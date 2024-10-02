@@ -25,7 +25,7 @@ pipeline {
                     emailext(
                         to: 'nimeshmakevitage@gmail.com',
                         subject: "Unit and Integration Tests Result - ${currentBuild.fullDisplayName}",
-                        body: "Please find the attached logs.",
+                        body: "Please find the attached logs for the unit and integration tests.",
                         attachLog: true // Attach the build log
                     )
                 }
@@ -48,7 +48,7 @@ pipeline {
                     emailext(
                         to: 'nimeshmakevitage@gmail.com',
                         subject: "Security Scan Result - ${currentBuild.fullDisplayName}",
-                        body: "Please find the attached logs.",
+                        body: "Please find the attached logs for the security scan.",
                         attachLog: true // Attach the build log
                     )
                 }
