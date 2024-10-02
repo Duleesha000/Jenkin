@@ -11,7 +11,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the code using Maven...'
-                // Example build command for Maven
+                // Make sure Maven is installed and available in the PATH
                 sh 'mvn clean install'
             }
             post {
