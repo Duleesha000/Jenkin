@@ -7,10 +7,21 @@ pipeline {
             } 
             post { 
                 success { 
-                    mail to: 'nimeshmakevitage@gmail.com', 
-                         subject: 'Build Status Email', 
-                         body: 'Build was Successful!' 
-                } 
+                    emailext(
+                        to: 'nimeshmakevitage@gmail.com', 
+                        subject: 'Build Status Email: Build Successful', 
+                        body: 'The build was successful!\n\nCheck the attached log for details.', 
+                        attachLog: true  // Attach the build log
+                    )
+                }
+                failure {
+                    emailext(
+                        to: 'nimeshmakevitage@gmail.com', 
+                        subject: 'Build Status Email: Build Failed', 
+                        body: 'The build failed.\n\nCheck the attached log for details.', 
+                        attachLog: true  // Attach the build log on failure as well
+                    )
+                }
             } 
         } 
         stage("Test"){ 
@@ -23,10 +34,10 @@ pipeline {
                 echo "Deploying..." 
             } 
         } 
-       stage("complete"){ 
+        stage("Complete"){ 
             steps{ 
-                echo "completed." 
+                echo "Completed." 
             } 
-       } 
+        } 
     } 
 }
