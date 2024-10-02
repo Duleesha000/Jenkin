@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     stages {
         stage('Checkout SCM') {
             steps {
@@ -9,34 +9,8 @@ pipeline {
         }
         stage('Build') {
             steps {
-                echo 'Building the code...'
+                echo 'Building the codes...'
                 // Add your build commands here
-            }
-            post {
-                success {
-                    emailext(
-                        to: 'nimeshmakevitage@gmail.com',
-                        subject: 'Build Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}',
-                        body: '''The build was successful!
-
-                        Check the details at ${env.BUILD_URL}.
-                        ''',
-                        attachLog: true,  // Attach the build log
-                        compressLog: true  // Compress log to reduce size (optional)
-                    )
-                }
-                failure {
-                    emailext(
-                        to: 'nimeshmakevitage@gmail.com',
-                        subject: 'Build Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}',
-                        body: '''The build failed.
-
-                        Check the details at ${env.BUILD_URL}.
-                        ''',
-                        attachLog: true,  // Attach the build log
-                        compressLog: true  // Compress log to reduce size (optional)
-                    )
-                }
             }
         }
         stage('Unit and Integration Tests') {
@@ -44,41 +18,51 @@ pipeline {
                 echo 'Running unit and integration tests...'
                 // Add your testing commands here
             }
+            post {
+                success {
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Unit and Integration Tests Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The unit and integration tests were successful!.",
+                        attachLog: true // Attach the log files
+                    )
+                }
+                failure {
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The unit and integration tests failed..",
+                        attachLog: true // Attach the log files
+                    )
+                }
+            }
         }
         stage('Code Analysis') {
             steps {
-                echo 'Analyzing the code...'
+                echo 'Analyzing code...'
                 // Add your code analysis commands here
             }
         }
         stage('Security Scan') {
             steps {
-                echo 'Performing a security scan...'
+                echo 'Performing security scan...'
                 // Add your security scan commands here
             }
             post {
                 success {
-                    emailext(
-                        to: 'nimeshmakevitage@gmail.com',
-                        subject: 'Security Scan Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}',
-                        body: '''The security scan was successful!
-
-                        Check the details at ${env.BUILD_URL}.
-                        ''',
-                        attachLog: true,  // Attach the build log
-                        compressLog: true  // Compress log to reduce size (optional)
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Security Scan Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The security scan was successful!.",
+                        attachLog: true // Attach the log files
                     )
                 }
                 failure {
-                    emailext(
-                        to: 'nimeshmakevitage@gmail.com',
-                        subject: 'Security Scan Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}',
-                        body: '''The security scan failed.
-
-                        Check the details at ${env.BUILD_URL}.
-                        ''',
-                        attachLog: true,  // Attach the build log
-                        compressLog: true  // Compress log to reduce size (optional)
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Security Scan Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The security scan failed.",
+                        attachLog: true // Attach the log files
                     )
                 }
             }
@@ -103,39 +87,5 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            emailext(
-                to: 'nimeshmakevitage@gmail.com',
-                subject: 'Build Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}',
-                body: '''The entire pipeline was successful!
-
-                Check the details at ${env.BUILD_URL}.
-                ''',
-                attachLog: false  // No need to attach the log here, it's already attached in earlier stages
-            )
-        }
-        failure {
-            emailext(
-                to: 'nimeshmakevitage@gmail.com',
-                subject: 'Build Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}',
-                body: '''The pipeline failed.
-
-                Check the details at ${env.BUILD_URL}.
-                ''',
-                attachLog: false  // No need to attach the log here, it's already attached in earlier stages
-            )
-        }
-        unstable {
-            emailext(
-                to: 'nimeshmakevitage@gmail.com',
-                subject: 'Build Unstable: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}',
-                body: '''The pipeline is unstable.
-
-                Check the details at ${env.BUILD_URL}.
-                ''',
-                attachLog: false  // No need to attach the log here, it's already attached in earlier stages
-            )
-        }
-    }
+   
 }
