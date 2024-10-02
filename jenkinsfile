@@ -12,7 +12,7 @@ pipeline {
             steps {
                 echo 'Building the code using Maven...'
                 // Make sure Maven is installed and available in the PATH
-                sh 'mvn clean install'
+                bat 'mvn clean install' // Use 'bat' for Windows
             }
             post {
                 success {
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 echo 'Running unit and integration tests using JUnit...'
                 // Example test command for JUnit
-                sh 'mvn test'
+                bat 'mvn test' // Use 'bat' for Windows
             }
             post {
                 success {
@@ -66,14 +66,14 @@ pipeline {
             steps {
                 echo 'Analyzing code using SonarQube...'
                 // Example command for SonarQube
-                sh 'sonar-scanner'
+                bat 'sonar-scanner' // Use 'bat' for Windows
             }
         }
         stage('Security Scan') {
             steps {
                 echo 'Performing security scan using OWASP Dependency-Check...'
                 // Example security scan command for OWASP Dependency-Check
-                sh 'dependency-check --project MyProject --scan ./'
+                bat 'dependency-check --project MyProject --scan ./'
             }
             post {
                 success {
