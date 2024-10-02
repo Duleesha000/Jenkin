@@ -2,109 +2,138 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout SCM') {
+            steps {
+                echo 'Checking out source code...'
+                checkout scm
+            }
+        }
+
         stage('Build') {
             steps {
                 echo 'Building the code...'
-                // Specify your build commands here (e.g., mvn clean install)
+                // Add your build commands here, e.g., for Maven: sh 'mvn clean package'
+            }
+            post {
+                success {
+                    echo 'Build successful!'
+                }
+                failure {
+                    echo 'Build failed!'
+                }
             }
         }
+
         stage('Unit and Integration Tests') {
             steps {
                 echo 'Running unit and integration tests...'
-                // Specify your test commands here (e.g., mvn test)
+                // Add test automation tool commands here, e.g., JUnit: sh 'mvn test'
             }
             post {
                 success {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
+                    emailext(
+                        to: 'nimeshmakevitage@gmail.com',
                         subject: "Unit and Integration Tests Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                         body: "The unit and integration tests were successful!\n\nCheck the details at ${env.BUILD_URL}.",
-                        attachLog: true // Attach the log files to the email
+                        attachLog: true
                     )
                 }
                 failure {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
+                    emailext(
+                        to: 'nimeshmakevitage@gmail.com',
                         subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                         body: "The unit and integration tests failed.\n\nCheck the details at ${env.BUILD_URL}.",
-                        attachLog: true // Attach the log files to the email
+                        attachLog: true
                     )
                 }
             }
         }
+
         stage('Code Analysis') {
             steps {
-                echo 'Analyzing the code...'
-                // Example: sonar-scanner command or any code analysis tool you choose
+                echo 'Analyzing code...'
+                // Use a code analysis tool like SonarQube: sh 'sonar-scanner'
+            }
+            post {
+                success {
+                    echo 'Code analysis completed successfully.'
+                }
+                failure {
+                    echo 'Code analysis failed.'
+                }
             }
         }
+
         stage('Security Scan') {
             steps {
                 echo 'Performing security scan...'
-                // Specify your security scanning commands here (e.g., OWASP ZAP, Snyk)
+                // Add a security scanning tool like OWASP Dependency-Check or Snyk
             }
             post {
                 success {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
+                    emailext(
+                        to: 'nimeshmakevitage@gmail.com',
                         subject: "Security Scan Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                         body: "The security scan was successful!\n\nCheck the details at ${env.BUILD_URL}.",
-                        attachLog: true // Attach the log files to the email
+                        attachLog: true
                     )
                 }
                 failure {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
+                    emailext(
+                        to: 'nimeshmakevitage@gmail.com',
                         subject: "Security Scan Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                         body: "The security scan failed.\n\nCheck the details at ${env.BUILD_URL}.",
-                        attachLog: true // Attach the log files to the email
+                        attachLog: true
                     )
                 }
             }
         }
+
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to staging...'
-                // Example: Use AWS CLI or kubectl for deployment to staging
+                echo 'Deploying to staging environment...'
+                // Deploy the application to a staging server (e.g., AWS EC2, Heroku)
             }
         }
+
         stage('Integration Tests on Staging') {
             steps {
                 echo 'Running integration tests on staging...'
-                // Specify your integration test commands for staging
+                // Perform integration tests on the staging environment
             }
         }
+
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to production...'
-                // Example: Use AWS CLI or kubectl for deployment to production
+                echo 'Deploying to production environment...'
+                // Deploy the application to the production server (e.g., AWS EC2, Docker)
             }
         }
     }
 
     post {
         success {
-            emailext (
-                to: "nimeshmakevitage@gmail.com",
+            emailext(
+                to: 'nimeshmakevitage@gmail.com',
                 subject: "Build Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                 body: "The build was successful!\n\nCheck the details at ${env.BUILD_URL}.",
-                attachLog: true // Attach the log files to the email
+                attachLog: true
             )
         }
         failure {
-            emailext (
-                to: "nimeshmakevitage@gmail.com",
+            emailext(
+                to: 'nimeshmakevitage@gmail.com',
                 subject: "Build Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                 body: "The build failed.\n\nCheck the details at ${env.BUILD_URL}.",
-                attachLog: true // Attach the log files to the email
+                attachLog: true
             )
         }
         unstable {
-            emailext (
-                to: "nimeshmakevitage@gmail.com",
+            emailext(
+                to: 'nimeshmakevitage@gmail.com',
                 subject: "Build Unstable: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
                 body: "The build is unstable.\n\nCheck the details at ${env.BUILD_URL}.",
-                attachLog: true // Attach the log files to the email
+                attachLog: true
             )
         }
     }
