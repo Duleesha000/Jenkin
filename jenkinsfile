@@ -9,8 +9,26 @@ pipeline {
         }
         stage('Build') {
             steps {
-                echo 'Building the codes...'
+                echo 'Building the code...'
                 // Add your build commands here
+            }
+            post {
+                success {
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Build Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The build was successful!\n\nCheck the details at ${env.BUILD_URL}.",
+                        attachLog: true // Attach the log files
+                    )
+                }
+                failure {
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Build Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The build failed.\n\nCheck the details at ${env.BUILD_URL}.",
+                        attachLog: true // Attach the log files
+                    )
+                }
             }
         }
         stage('Unit and Integration Tests') {
@@ -23,7 +41,7 @@ pipeline {
                     emailext (
                         to: "nimeshmakevitage@gmail.com",
                         subject: "Unit and Integration Tests Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The unit and integration tests were successful!.",
+                        body: "The unit and integration tests were successful!\n\nCheck the details at ${env.BUILD_URL}.",
                         attachLog: true // Attach the log files
                     )
                 }
@@ -31,7 +49,7 @@ pipeline {
                     emailext (
                         to: "nimeshmakevitage@gmail.com",
                         subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The unit and integration tests failed..",
+                        body: "The unit and integration tests failed.\n\nCheck the details at ${env.BUILD_URL}.",
                         attachLog: true // Attach the log files
                     )
                 }
@@ -53,7 +71,7 @@ pipeline {
                     emailext (
                         to: "nimeshmakevitage@gmail.com",
                         subject: "Security Scan Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The security scan was successful!.",
+                        body: "The security scan was successful!\n\nCheck the details at ${env.BUILD_URL}.",
                         attachLog: true // Attach the log files
                     )
                 }
@@ -61,7 +79,7 @@ pipeline {
                     emailext (
                         to: "nimeshmakevitage@gmail.com",
                         subject: "Security Scan Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The security scan failed.",
+                        body: "The security scan failed.\n\nCheck the details at ${env.BUILD_URL}.",
                         attachLog: true // Attach the log files
                     )
                 }
@@ -86,6 +104,18 @@ pipeline {
             }
         }
     }
-
-   
+    
+    post {
+        always {
+            script {
+                // Ensure all logs are attached in the final email
+                emailext (
+                    to: "nimeshmakevitage@gmail.com",
+                    subject: "Pipeline Finished: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                    body: "The pipeline has finished running.\n\nCheck the details at ${env.BUILD_URL}.",
+                    attachLog: true // Attach the log files for the entire pipeline
+                )
+            }
+        }
+    }
 }
