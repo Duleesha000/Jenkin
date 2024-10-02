@@ -2,18 +2,90 @@ pipeline {
     agent any
 
     stages {
-        stage('Test Email') {
+        stage('Checkout SCM') {
             steps {
-                script {
+                echo 'Checking out the source code from the version control system...'
+                echo 'Tool: Git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building the code using a build automation tool to compile and package the application...'
+                echo 'Tool: Maven'
+            }
+        }
+        stage('Unit and Integration Tests') {
+            steps {
+                echo 'Running unit tests to ensure individual components function correctly...'
+                echo 'Running integration tests to verify that different parts of the application work together as expected...'
+                echo 'Tools: JUnit, TestNG'
+            }
+            post {
+                success {
                     emailext (
                         to: "nimeshmakevitage@gmail.com",
-                        subject: "Test Email from Jenkins",
-                        body: "This is a test email to verify SMTP configuration.",
-                        attachLog: true
+                        subject: "Unit and Integration Tests Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The unit and integration tests were successful!\n\nCheck the logs for more details.",
+                        attachLog: true // Attach the log files
+                    )
+                }
+                failure {
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The unit and integration tests failed.\n\nCheck the logs for more details.",
+                        attachLog: true // Attach the log files
                     )
                 }
             }
         }
-        // ... other stages
+        stage('Code Analysis') {
+            steps {
+                echo 'Analyzing code for quality and adherence to coding standards...'
+                echo 'Tool: SonarQube'
+            }
+        }
+        stage('Security Scan') {
+            steps {
+                echo 'Performing a security scan to identify any vulnerabilities in the code...'
+                echo 'Tool: OWASP Dependency-Check'
+            }
+            post {
+                success {
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Security Scan Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The security scan was successful!\n\nCheck the logs for more details.",
+                        attachLog: true // Attach the log files
+                    )
+                }
+                failure {
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Security Scan Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The security scan failed.\n\nCheck the logs for more details.",
+                        attachLog: true // Attach the log files
+                    )
+                }
+            }
+        }
+        stage('Deploy to Staging') {
+            steps {
+                echo 'Deploying the application to a staging environment for further testing...'
+                echo 'Tool: AWS CLI'
+            }
+        }
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Running integration tests on the staging environment to ensure functionality...'
+                echo 'Tool: Selenium'
+            }
+        }
+        stage('Deploy to Production') {
+            steps {
+                echo 'Deploying the application to the production server...'
+                echo 'Tool: AWS CLI'
+            }
+        }
     }
 }
