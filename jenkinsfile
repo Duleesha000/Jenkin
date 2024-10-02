@@ -1,13 +1,16 @@
-post {
-    always {
-        echo 'Pipeline completed'
-    }
-    success {
-        emailext (
-            to: "nimeshmakevitage@gmail.com",
-            subject: "Build Successful",
-            body: "Your build was successful!",
-            attachLog: true
-        )
-    }
-}
+pipeline { 
+    agent any 
+    stages { 
+        stage('Build') { 
+            steps { 
+                echo 'Building...' 
+            } 
+            post { 
+                success { 
+                    mail to: 'nimeshmakevitage@gmail.com', 
+                         subject: 'Build Status Email', 
+                         body: 'Build was Successful!' ,
+                          attachLog: true
+                } 
+            } 
+        }
