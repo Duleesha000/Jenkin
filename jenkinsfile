@@ -1,5 +1,6 @@
 pipeline { 
     agent any 
+
     stages { 
         stage('Build') { 
             steps { 
@@ -11,22 +12,66 @@ pipeline {
                          subject: 'Build Status Email', 
                          body: 'Build was Successful!' 
                 } 
+                failure { 
+                    mail to: 'nimeshmakevitage@gmail.com', 
+                         subject: 'Build Status Email', 
+                         body: 'Build failed.' 
+                } 
             } 
         } 
-        stage("Test"){ 
-            steps{ 
+        
+        stage("Test") { 
+            steps { 
                 echo "Testing..." 
             } 
+            post { 
+                success { 
+                    mail to: 'nimeshmakevitage@gmail.com', 
+                         subject: 'Test Status Email', 
+                         body: 'Tests were successful!' 
+                } 
+                failure { 
+                    mail to: 'nimeshmakevitage@gmail.com', 
+                         subject: 'Test Status Email', 
+                         body: 'Some tests failed.' 
+                } 
+            } 
         } 
-        stage("Deploy"){ 
-            steps{ 
+        
+        stage("Deploy") { 
+            steps { 
                 echo "Deploying..." 
             } 
-        } 
-       stage("complete"){ 
-            steps{ 
-                echo "completed." 
+            post { 
+                success { 
+                    mail to: 'nimeshmakevitage@gmail.com', 
+                         subject: 'Deploy Status Email', 
+                         body: 'Deployment was successful!' 
+                } 
+                failure { 
+                    mail to: 'nimeshmakevitage@gmail.com', 
+                         subject: 'Deploy Status Email', 
+                         body: 'Deployment failed.' 
+                } 
             } 
-       } 
+        } 
+        
+        stage("Complete") { 
+            steps { 
+                echo "Completed." 
+            } 
+            post { 
+                success { 
+                    mail to: 'nimeshmakevitage@gmail.com', 
+                         subject: 'Pipeline Completion Status', 
+                         body: 'The pipeline completed successfully!' 
+                } 
+                failure { 
+                    mail to: 'nimeshmakevitage@gmail.com', 
+                         subject: 'Pipeline Completion Status', 
+                         body: 'The pipeline completed with failures.' 
+                } 
+            } 
+        } 
     } 
 }
