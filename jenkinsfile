@@ -2,147 +2,110 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout SCM') {
-            steps {
-                echo 'Checking out from SCM...'
-                checkout scm
-            }
-        }
         stage('Build') {
             steps {
-                echo 'Building the code using Maven...'
-                // Example build command for Maven
-                sh 'mvn clean install'
-            }
-            post {
-                success {
-                    script {
-                        def buildNumber = env.BUILD_NUMBER
-                        mail to: 'nimeshmakevitage@gmail.com',
-                             subject: "Build Successful: ${env.JOB_NAME} - Build #${buildNumber}",
-                             body: "The build was successful!\n\nCheck the details at ${env.BUILD_URL}.",
-                             attachLog: true
-                    }
-                }
-                failure {
-                    script {
-                        def buildNumber = env.BUILD_NUMBER
-                        mail to: 'nimeshmakevitage@gmail.com',
-                             subject: "Build Failed: ${env.JOB_NAME} - Build #${buildNumber}",
-                             body: "The build failed.\n\nCheck the details at ${env.BUILD_URL}.",
-                             attachLog: true
-                    }
-                }
+                echo 'Building the code...'
+                // Specify your build commands here (e.g., mvn clean install)
             }
         }
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Running unit and integration tests using JUnit...'
-                // Example test command for JUnit
-                sh 'mvn test'
+                echo 'Running unit and integration tests...'
+                // Specify your test commands here (e.g., mvn test)
             }
             post {
                 success {
-                    script {
-                        def buildNumber = env.BUILD_NUMBER
-                        mail to: 'nimeshmakevitage@gmail.com',
-                             subject: "Unit and Integration Tests Successful: ${env.JOB_NAME} - Build #${buildNumber}",
-                             body: "The tests were successful!\n\nCheck the details at ${env.BUILD_URL}.",
-                             attachLog: true
-                    }
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Unit and Integration Tests Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The unit and integration tests were successful!\n\nCheck the details at ${env.BUILD_URL}.",
+                        attachLog: true // Attach the log files to the email
+                    )
                 }
                 failure {
-                    script {
-                        def buildNumber = env.BUILD_NUMBER
-                        mail to: 'nimeshmakevitage@gmail.com',
-                             subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} - Build #${buildNumber}",
-                             body: "The tests failed.\n\nCheck the details at ${env.BUILD_URL}.",
-                             attachLog: true
-                    }
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The unit and integration tests failed.\n\nCheck the details at ${env.BUILD_URL}.",
+                        attachLog: true // Attach the log files to the email
+                    )
                 }
             }
         }
         stage('Code Analysis') {
             steps {
-                echo 'Analyzing code using SonarQube...'
-                // Example command for SonarQube
-                sh 'sonar-scanner'
+                echo 'Analyzing the code...'
+                // Example: sonar-scanner command or any code analysis tool you choose
             }
         }
         stage('Security Scan') {
             steps {
-                echo 'Performing security scan using OWASP Dependency-Check...'
-                // Example security scan command for OWASP Dependency-Check
-                sh 'dependency-check --project MyProject --scan ./'
+                echo 'Performing security scan...'
+                // Specify your security scanning commands here (e.g., OWASP ZAP, Snyk)
             }
             post {
                 success {
-                    script {
-                        def buildNumber = env.BUILD_NUMBER
-                        mail to: 'nimeshmakevitage@gmail.com',
-                             subject: "Security Scan Successful: ${env.JOB_NAME} - Build #${buildNumber}",
-                             body: "The security scan was successful!\n\nCheck the details at ${env.BUILD_URL}.",
-                             attachLog: true
-                    }
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Security Scan Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The security scan was successful!\n\nCheck the details at ${env.BUILD_URL}.",
+                        attachLog: true // Attach the log files to the email
+                    )
                 }
                 failure {
-                    script {
-                        def buildNumber = env.BUILD_NUMBER
-                        mail to: 'nimeshmakevitage@gmail.com',
-                             subject: "Security Scan Failed: ${env.JOB_NAME} - Build #${buildNumber}",
-                             body: "The security scan failed.\n\nCheck the details at ${env.BUILD_URL}.",
-                             attachLog: true
-                    }
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Security Scan Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The security scan failed.\n\nCheck the details at ${env.BUILD_URL}.",
+                        attachLog: true // Attach the log files to the email
+                    )
                 }
             }
         }
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to staging (e.g., AWS EC2 instance)...'
-                // Add deployment commands here
+                echo 'Deploying to staging...'
+                // Example: Use AWS CLI or kubectl for deployment to staging
             }
         }
         stage('Integration Tests on Staging') {
             steps {
                 echo 'Running integration tests on staging...'
-                // Add integration testing commands here
+                // Specify your integration test commands for staging
             }
         }
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to production (e.g., AWS EC2 instance)...'
-                // Add production deployment commands here
+                echo 'Deploying to production...'
+                // Example: Use AWS CLI or kubectl for deployment to production
             }
         }
     }
 
     post {
         success {
-            script {
-                def buildNumber = env.BUILD_NUMBER
-                mail to: 'nimeshmakevitage@gmail.com',
-                     subject: "Pipeline Successful: ${env.JOB_NAME} - Build #${buildNumber}",
-                     body: "The pipeline completed successfully!\n\nCheck the details at ${env.BUILD_URL}.",
-                     attachLog: true
-            }
+            emailext (
+                to: "nimeshmakevitage@gmail.com",
+                subject: "Build Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                body: "The build was successful!\n\nCheck the details at ${env.BUILD_URL}.",
+                attachLog: true // Attach the log files to the email
+            )
         }
         failure {
-            script {
-                def buildNumber = env.BUILD_NUMBER
-                mail to: 'nimeshmakevitage@gmail.com',
-                     subject: "Pipeline Failed: ${env.JOB_NAME} - Build #${buildNumber}",
-                     body: "The pipeline failed.\n\nCheck the details at ${env.BUILD_URL}.",
-                     attachLog: true
-            }
+            emailext (
+                to: "nimeshmakevitage@gmail.com",
+                subject: "Build Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                body: "The build failed.\n\nCheck the details at ${env.BUILD_URL}.",
+                attachLog: true // Attach the log files to the email
+            )
         }
         unstable {
-            script {
-                def buildNumber = env.BUILD_NUMBER
-                mail to: 'nimeshmakevitage@gmail.com',
-                     subject: "Pipeline Unstable: ${env.JOB_NAME} - Build #${buildNumber}",
-                     body: "The pipeline is unstable.\n\nCheck the details at ${env.BUILD_URL}.",
-                     attachLog: true
-            }
+            emailext (
+                to: "nimeshmakevitage@gmail.com",
+                subject: "Build Unstable: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                body: "The build is unstable.\n\nCheck the details at ${env.BUILD_URL}.",
+                attachLog: true // Attach the log files to the email
+            )
         }
     }
 }
