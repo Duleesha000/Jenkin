@@ -9,8 +9,24 @@ pipeline {
                 success { 
                     mail to: 'nimeshmakevitage@gmail.com', 
                          subject: 'Build Status Email', 
-                         body: 'Build was Successful!' ,
-                          attachLog: true
+                         body: 'Build was Successful!' 
                 } 
             } 
-        }
+        } 
+        stage("Test"){ 
+            steps{ 
+                echo "Testing..." 
+            } 
+        } 
+        stage("Deploy"){ 
+            steps{ 
+                echo "Deploying..." 
+            } 
+        } 
+       stage("complete"){ 
+            steps{ 
+                echo "completed." 
+            } 
+       } 
+    } 
+}
