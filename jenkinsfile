@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent any 
 
     stages {
         stage('Checkout SCM') {
@@ -7,85 +7,73 @@ pipeline {
                 checkout scm
             }
         }
+        
         stage('Build') {
             steps {
                 echo 'Building the codes...'
-                // Add your build commands here
+                // Your build commands go here
             }
         }
+
         stage('Unit and Integration Tests') {
             steps {
                 echo 'Running unit and integration tests...'
-                // Add your testing commands here
+                // Your testing commands go here
             }
             post {
-                success {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
-                        subject: "Unit and Integration Tests Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The unit and integration tests were successful!.",
-                        attachLog: true // Attach the log files
-                    )
-                }
-                failure {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
-                        subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The unit and integration tests failed..",
-                        attachLog: true // Attach the log files
+                always {
+                    emailext(
+                        to: 'nimeshmakevitage@gmail.com',
+                        subject: "Unit and Integration Tests Result - ${currentBuild.fullDisplayName}",
+                        body: "Please find the attached logs.",
+                        attachLog: true // Attach the build log
                     )
                 }
             }
         }
+
         stage('Code Analysis') {
             steps {
                 echo 'Analyzing code...'
-                // Add your code analysis commands here
+                // Your code analysis commands go here
             }
         }
+
         stage('Security Scan') {
             steps {
                 echo 'Performing security scan...'
-                // Add your security scan commands here
             }
             post {
-                success {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
-                        subject: "Security Scan Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The security scan was successful!.",
-                        attachLog: true // Attach the log files
-                    )
-                }
-                failure {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
-                        subject: "Security Scan Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The security scan failed.",
-                        attachLog: true // Attach the log files
+                always {
+                    emailext(
+                        to: 'nimeshmakevitage@gmail.com',
+                        subject: "Security Scan Result - ${currentBuild.fullDisplayName}",
+                        body: "Please find the attached logs.",
+                        attachLog: true // Attach the build log
                     )
                 }
             }
         }
+
         stage('Deploy to Staging') {
             steps {
                 echo 'Deploying to staging...'
-                // Add your deployment commands here
+                // Your deployment commands go here
             }
         }
+
         stage('Integration Tests on Staging') {
             steps {
                 echo 'Running integration tests on staging...'
-                // Add your integration testing commands here
+                // Your integration test commands go here
             }
         }
+
         stage('Deploy to Production') {
             steps {
                 echo 'Deploying to production...'
-                // Add your production deployment commands here
+                // Your production deployment commands go here
             }
         }
     }
-
-   
 }
