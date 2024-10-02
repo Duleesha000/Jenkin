@@ -49,13 +49,13 @@ pipeline {
 
     post {
         success {
-            mail to: 'nimeshmakevitage@gmail.com',
+            mail to: 'your-email@example.com',
                  subject: "Build Successful: ${env.JOB_NAME}",
                  body: "The build was successful!\n\nCheck the details at ${env.BUILD_URL}.",
                  attachLog: true
         }
         failure {
-            mail to: 'nimeshmakevitage@gmail.com',
+            mail to: 'your-email@example.com',
                  subject: "Build Failed: ${env.JOB_NAME}",
                  body: "The build failed.\n\nCheck the details at ${env.BUILD_URL}.",
                  attachLog: true
