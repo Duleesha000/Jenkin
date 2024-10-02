@@ -18,7 +18,7 @@ pipeline {
         stage('Unit and Integration Tests') {
             steps {
                 echo 'Running unit and integration tests...'
-                // Your testing commands go here
+                // Your unit and integration test commands go here
             }
             post {
                 always {
@@ -58,7 +58,7 @@ pipeline {
         stage('Deploy to Staging') {
             steps {
                 echo 'Deploying to staging...'
-                // Your deployment commands go here
+                // Your staging deployment commands go here
             }
         }
 
