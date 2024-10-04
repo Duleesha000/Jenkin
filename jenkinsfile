@@ -1,103 +1,50 @@
 pipeline {
     agent any
 
-    stages {
-        stage('Checkout SCM') {
-            steps {
-                checkout scm
-            }
-        }
+    environment {
+        DIRECTORY_PATH = "C:/ProgramData/Jenkins/.jenkins/jobs/5.1P_Pipe_line"
+        TESTING_ENVIRONMENT = "TestEnv"
+        PRODUCTION_ENVIRONMENT = "NimeshEnv"  // Replace "NimeshEnv" with your name
+    }
 
+    stages {
         stage('Build') {
             steps {
-                echo 'Building the code...'
-                // Add your build commands here, e.g., compile, npm install, etc.
+                echo "Fetch the source code from the directory path: ${env.DIRECTORY_PATH}"
+                echo "Compile the code and generate any necessary artifacts"
             }
         }
 
-        stage('Unit and Integration Tests') {
+        stage('Test') {
             steps {
-                echo 'Running unit and integration tests...'
-                // Add your testing commands here, e.g., running test scripts, mvn test, npm test, etc.
-            }
-            post {
-                success {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
-                        subject: "Unit and Integration Tests Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The unit and integration tests were successful for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
-                        attachLog: true // Attach the log files
-                    )
-                }
-                failure {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
-                        subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The unit and integration tests failed for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
-                        attachLog: true // Attach the log files
-                    )
-                }
+                echo "Unit tests"
+                echo "Integration tests"
             }
         }
 
-        stage('Code Analysis') {
+        stage('Code Quality Check') {
             steps {
-                echo 'Analyzing code...'
-                // Add your code analysis commands here, e.g., SonarQube, static analysis tools
+                echo "Check the quality of the code"
             }
         }
 
-        stage('Security Scan') {
+        stage('Deploy') {
             steps {
-                echo 'Performing security scan...'
-                // Add your security scanning commands here, e.g., dependency check, vulnerability scans
-            }
-            post {
-                success {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
-                        subject: "Security Scan Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The security scan was successful for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
-                        attachLog: true // Attach the log files
-                    )
-                }
-                failure {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
-                        subject: "Security Scan Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The security scan failed for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
-                        attachLog: true // Attach the log files
-                    )
-                }
+                echo "Deploy the application to the testing environment: ${env.TESTING_ENVIRONMENT}"
             }
         }
 
-        stage('Deploy to Staging') {
+        stage('Approval') {
             steps {
-                echo 'Deploying to staging...'
-                // Add your deployment commands here, e.g., deploying to a test environment, Docker, Kubernetes, etc.
-            }
-        }
-
-        stage('Integration Tests on Staging') {
-            steps {
-                echo 'Running integration tests on staging...'
-                // Add your integration testing commands here, verifying the deployment on staging
+                echo "Waiting for manual approval..."
+                sleep(time: 10, unit: 'SECONDS')
             }
         }
 
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to production...'
-                // Add your production deployment commands here
+                echo "Deploy the code to the production environment: ${env.PRODUCTION_ENVIRONMENT}"
             }
-        }
-    }
-
-    post {
-        always {
-            echo 'Cleaning up workspace...'
-            cleanWs() // Cleans up the workspace after the pipeline is complete
         }
     }
 }
