@@ -6,108 +6,42 @@ pipeline {
     }
 
     stages {
-        // Stage 1: Build
         stage('Build') {
             steps {
-                echo 'Building the code using Maven...'
-                echo 'Maven is the chosen build automation tool.'
-                // Placeholder for actual build command
-                // For example: sh 'mvn clean package'
+                echo 'Building the code...'
             }
         }
 
-        // Stage 2: Unit and Integration Tests
-        stage('Unit and Integration Tests') {
+        stage('Test') {
             steps {
-                echo 'Running unit and integration tests using JUnit...'
-                // Placeholder for actual test command
-                // For example: sh 'mvn test'
-            }
-            post {
-                success {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
-                        subject: "Unit and Integration Tests Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The unit and integration tests were successful for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
-                        attachLog: true
-                    )
-                }
-                failure {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
-                        subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The unit and integration tests failed for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
-                        attachLog: true
-                    )
-                }
+                echo 'Running tests...'
             }
         }
 
-        // Stage 3: Code Analysis
-        stage('Code Analysis') {
+        stage('Deploy') {
             steps {
-                echo 'Analyzing code using SonarQube...'
-                // Placeholder for actual code analysis command
-                // For example: sh 'sonar-scanner'
-            }
-        }
-
-        // Stage 4: Security Scan
-        stage('Security Scan') {
-            steps {
-                echo 'Performing security scan using OWASP Dependency-Check...'
-                // Placeholder for actual security scan command
-                // For example: sh 'dependency-check --scan .'
-            }
-            post {
-                success {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
-                        subject: "Security Scan Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The security scan was successful for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
-                        attachLog: true
-                    )
-                }
-                failure {
-                    emailext (
-                        to: "nimeshmakevitage@gmail.com",
-                        subject: "Security Scan Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The security scan failed for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
-                        attachLog: true
-                    )
-                }
-            }
-        }
-
-        // Stage 5: Deploy to Staging
-        stage('Deploy to Staging') {
-            steps {
-                echo 'Deploying to the staging environment on AWS EC2...'
-                // Placeholder for actual deployment command
-                // For example: sh 'scp -i key.pem target/myapp.jar ec2-user@staging-server:/path/to/app'
-            }
-        }
-
-        // Stage 6: Integration Tests on Staging
-        stage('Integration Tests on Staging') {
-            steps {
-                echo 'Running integration tests on staging using JUnit...'
-                // Placeholder for actual test command
-                // For example: sh 'mvn verify'
-            }
-        }
-
-        // Stage 7: Deploy to Production
-        stage('Deploy to Production') {
-            steps {
-                echo 'Deploying to the production environment on AWS EC2...'
-                // Placeholder for actual production deployment command
-                // For example: sh 'scp -i key.pem target/myapp.jar ec2-user@production-server:/path/to/app'
+                echo 'Deploying the application...'
             }
         }
     }
 
     post {
+        success {
+            emailext (
+                to: "nimeshmakevitage@gmail.com",
+                subject: "Pipeline Success: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                body: "The pipeline has completed successfully!",
+                attachLog: true // Attach the log files
+            )
+        }
+        failure {
+            emailext (
+                to: "nimeshmakevitage@gmail.com",
+                subject: "Pipeline Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                body: "The pipeline has failed. Please check the logs.",
+                attachLog: true // Attach the log files
+            )
+        }
         always {
             echo 'Cleaning up workspace...'
             cleanWs() // Clean workspace after the job completes
