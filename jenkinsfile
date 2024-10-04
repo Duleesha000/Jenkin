@@ -1,50 +1,27 @@
 pipeline {
     agent any
-
-    triggers {
-        pollSCM('H/2 * * * *') // Poll SCM every 2 minutes
-    }
-
     stages {
         stage('Build') {
             steps {
-                echo 'Building the code...'
+                echo 'Building...'
+            }
+            post {
+                success {
+                    mail to: 'nimeshmakevitage@gmail.com',
+                         subject: 'Build Status Email',
+                         body: 'Build was Successful!'
+                }
             }
         }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
+        stage("Test"){
+            steps{
+                echo "Testing..."
             }
         }
-
-        stage('Deploy') {
-            steps {
-                echo 'Deploying the application...'
+        stage("Deploy"){
+            steps{
+                echo "Deploying..."
             }
-        }
-    }
-
-    post {
-        success {
-            emailext (
-                to: "nimeshmakevitage@gmail.com",
-                subject: "Pipeline Success: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                body: "The pipeline has completed successfully!",
-                attachLog: true // Attach the log files
-            )
-        }
-        failure {
-            emailext (
-                to: "nimeshmakevitage@gmail.com",
-                subject: "Pipeline Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                body: "The pipeline has failed. Please check the logs.",
-                attachLog: true // Attach the log files
-            )
-        }
-        always {
-            echo 'Cleaning up workspace...'
-            cleanWs() // Clean workspace after the job completes
         }
     }
 }
