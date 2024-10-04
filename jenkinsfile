@@ -7,23 +7,25 @@ pipeline {
                 checkout scm
             }
         }
+
         stage('Build') {
             steps {
-                echo 'Building the codes...'
-                // Add your build commands here
+                echo 'Building the code...'
+                // Add your build commands here, e.g., compile, npm install, etc.
             }
         }
+
         stage('Unit and Integration Tests') {
             steps {
                 echo 'Running unit and integration tests...'
-                // Add your testing commands here
+                // Add your testing commands here, e.g., running test scripts, mvn test, npm test, etc.
             }
             post {
                 success {
                     emailext (
                         to: "nimeshmakevitage@gmail.com",
                         subject: "Unit and Integration Tests Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The unit and integration tests were successful!.",
+                        body: "The unit and integration tests were successful for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
                         attachLog: true // Attach the log files
                     )
                 }
@@ -31,29 +33,31 @@ pipeline {
                     emailext (
                         to: "nimeshmakevitage@gmail.com",
                         subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The unit and integration tests failed..",
+                        body: "The unit and integration tests failed for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
                         attachLog: true // Attach the log files
                     )
                 }
             }
         }
+
         stage('Code Analysis') {
             steps {
                 echo 'Analyzing code...'
-                // Add your code analysis commands here
+                // Add your code analysis commands here, e.g., SonarQube, static analysis tools
             }
         }
+
         stage('Security Scan') {
             steps {
                 echo 'Performing security scan...'
-                // Add your security scan commands here
+                // Add your security scanning commands here, e.g., dependency check, vulnerability scans
             }
             post {
                 success {
                     emailext (
                         to: "nimeshmakevitage@gmail.com",
                         subject: "Security Scan Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The security scan was successful!.",
+                        body: "The security scan was successful for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
                         attachLog: true // Attach the log files
                     )
                 }
@@ -61,31 +65,39 @@ pipeline {
                     emailext (
                         to: "nimeshmakevitage@gmail.com",
                         subject: "Security Scan Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "The security scan failed.",
+                        body: "The security scan failed for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
                         attachLog: true // Attach the log files
                     )
                 }
             }
         }
+
         stage('Deploy to Staging') {
             steps {
                 echo 'Deploying to staging...'
-                // Add your deployment commands here
+                // Add your deployment commands here, e.g., deploying to a test environment, Docker, Kubernetes, etc.
             }
         }
+
         stage('Integration Tests on Staging') {
             steps {
                 echo 'Running integration tests on staging...'
-                // Add your integration testing commands here
+                // Add your integration testing commands here, verifying the deployment on staging
             }
         }
+
         stage('Deploy to Production') {
             steps {
                 echo 'Deploying to production...'
                 // Add your production deployment commands here
             }
-        }
-    }
+        }
+    }
 
-   
+    post {
+        always {
+            echo 'Cleaning up workspace...'
+            cleanWs() // Cleans up the workspace after the pipeline is complete
+        }
+    }
 }
