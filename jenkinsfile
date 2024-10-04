@@ -1,12 +1,16 @@
 pipeline {
     agent any
 
+    triggers {
+        pollSCM('H/2 * * * *') // Poll SCM every 2 minutes
+    }
+
     stages {
         // Stage 1: Build
         stage('Build') {
             steps {
-                echo 'Building the code...'
-                echo 'Using Maven as the build automation tool.'
+                echo 'Building the code using Maven...'
+                echo 'Maven is the chosen build automation tool.'
                 // Placeholder for actual build command
                 // For example: sh 'mvn clean package'
             }
@@ -15,8 +19,7 @@ pipeline {
         // Stage 2: Unit and Integration Tests
         stage('Unit and Integration Tests') {
             steps {
-                echo 'Running unit and integration tests...'
-                echo 'Using JUnit for unit testing and integration testing.'
+                echo 'Running unit and integration tests using JUnit...'
                 // Placeholder for actual test command
                 // For example: sh 'mvn test'
             }
@@ -43,8 +46,7 @@ pipeline {
         // Stage 3: Code Analysis
         stage('Code Analysis') {
             steps {
-                echo 'Analyzing code...'
-                echo 'Using SonarQube for static code analysis.'
+                echo 'Analyzing code using SonarQube...'
                 // Placeholder for actual code analysis command
                 // For example: sh 'sonar-scanner'
             }
@@ -53,8 +55,7 @@ pipeline {
         // Stage 4: Security Scan
         stage('Security Scan') {
             steps {
-                echo 'Performing security scan...'
-                echo 'Using OWASP Dependency-Check for security scanning.'
+                echo 'Performing security scan using OWASP Dependency-Check...'
                 // Placeholder for actual security scan command
                 // For example: sh 'dependency-check --scan .'
             }
@@ -81,8 +82,7 @@ pipeline {
         // Stage 5: Deploy to Staging
         stage('Deploy to Staging') {
             steps {
-                echo 'Deploying to the staging server...'
-                echo 'Deploying to AWS EC2 instance for staging environment.'
+                echo 'Deploying to the staging environment on AWS EC2...'
                 // Placeholder for actual deployment command
                 // For example: sh 'scp -i key.pem target/myapp.jar ec2-user@staging-server:/path/to/app'
             }
@@ -91,8 +91,7 @@ pipeline {
         // Stage 6: Integration Tests on Staging
         stage('Integration Tests on Staging') {
             steps {
-                echo 'Running integration tests on staging environment...'
-                echo 'Using JUnit to run integration tests on staging.'
+                echo 'Running integration tests on staging using JUnit...'
                 // Placeholder for actual test command
                 // For example: sh 'mvn verify'
             }
@@ -101,9 +100,8 @@ pipeline {
         // Stage 7: Deploy to Production
         stage('Deploy to Production') {
             steps {
-                echo 'Deploying to the production server...'
-                echo 'Deploying to AWS EC2 instance for production environment.'
-                // Placeholder for actual deployment command
+                echo 'Deploying to the production environment on AWS EC2...'
+                // Placeholder for actual production deployment command
                 // For example: sh 'scp -i key.pem target/myapp.jar ec2-user@production-server:/path/to/app'
             }
         }
@@ -112,7 +110,7 @@ pipeline {
     post {
         always {
             echo 'Cleaning up workspace...'
-            cleanWs()
+            cleanWs() // Clean workspace after the job completes
         }
     }
 }
