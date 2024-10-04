@@ -1,50 +1,118 @@
 pipeline {
     agent any
 
-    environment {
-        DIRECTORY_PATH = "C:/ProgramData/Jenkins/.jenkins/jobs/5.1P_Pipe_line"
-        TESTING_ENVIRONMENT = "TestEnv"
-        PRODUCTION_ENVIRONMENT = "NimeshEnv"  // Replace "NimeshEnv" with your name
-    }
-
     stages {
+        // Stage 1: Build
         stage('Build') {
             steps {
-                echo "Fetch the source code from the directory path: ${env.DIRECTORY_PATH}"
-                echo "Compile the code and generate any necessary artifacts"
+                echo 'Building the code...'
+                echo 'Using Maven as the build automation tool.'
+                // Placeholder for actual build command
+                // For example: sh 'mvn clean package'
             }
         }
 
-        stage('Test') {
+        // Stage 2: Unit and Integration Tests
+        stage('Unit and Integration Tests') {
             steps {
-                echo "Unit tests"
-                echo "Integration tests"
+                echo 'Running unit and integration tests...'
+                echo 'Using JUnit for unit testing and integration testing.'
+                // Placeholder for actual test command
+                // For example: sh 'mvn test'
+            }
+            post {
+                success {
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Unit and Integration Tests Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The unit and integration tests were successful for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
+                        attachLog: true
+                    )
+                }
+                failure {
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Unit and Integration Tests Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The unit and integration tests failed for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
+                        attachLog: true
+                    )
+                }
             }
         }
 
-        stage('Code Quality Check') {
+        // Stage 3: Code Analysis
+        stage('Code Analysis') {
             steps {
-                echo "Check the quality of the code"
+                echo 'Analyzing code...'
+                echo 'Using SonarQube for static code analysis.'
+                // Placeholder for actual code analysis command
+                // For example: sh 'sonar-scanner'
             }
         }
 
-        stage('Deploy') {
+        // Stage 4: Security Scan
+        stage('Security Scan') {
             steps {
-                echo "Deploy the application to the testing environment: ${env.TESTING_ENVIRONMENT}"
+                echo 'Performing security scan...'
+                echo 'Using OWASP Dependency-Check for security scanning.'
+                // Placeholder for actual security scan command
+                // For example: sh 'dependency-check --scan .'
+            }
+            post {
+                success {
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Security Scan Successful: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The security scan was successful for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
+                        attachLog: true
+                    )
+                }
+                failure {
+                    emailext (
+                        to: "nimeshmakevitage@gmail.com",
+                        subject: "Security Scan Failed: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "The security scan failed for ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}.",
+                        attachLog: true
+                    )
+                }
             }
         }
 
-        stage('Approval') {
+        // Stage 5: Deploy to Staging
+        stage('Deploy to Staging') {
             steps {
-                echo "Waiting for manual approval..."
-                sleep(time: 10, unit: 'SECONDS')
+                echo 'Deploying to the staging server...'
+                echo 'Deploying to AWS EC2 instance for staging environment.'
+                // Placeholder for actual deployment command
+                // For example: sh 'scp -i key.pem target/myapp.jar ec2-user@staging-server:/path/to/app'
             }
         }
 
+        // Stage 6: Integration Tests on Staging
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Running integration tests on staging environment...'
+                echo 'Using JUnit to run integration tests on staging.'
+                // Placeholder for actual test command
+                // For example: sh 'mvn verify'
+            }
+        }
+
+        // Stage 7: Deploy to Production
         stage('Deploy to Production') {
             steps {
-                echo "Deploy the code to the production environment: ${env.PRODUCTION_ENVIRONMENT}"
+                echo 'Deploying to the production server...'
+                echo 'Deploying to AWS EC2 instance for production environment.'
+                // Placeholder for actual deployment command
+                // For example: sh 'scp -i key.pem target/myapp.jar ec2-user@production-server:/path/to/app'
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up workspace...'
+            cleanWs()
         }
     }
 }
